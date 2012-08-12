@@ -13,3 +13,8 @@ results
 
 node_modules
 npm-debug.log
+*~
+*.bak
+storage/kvdb/DB*
+storage/kvdb/*.tar.gz
+

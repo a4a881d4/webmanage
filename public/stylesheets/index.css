@@ -1,0 +1,27 @@
+#main
+{
+	min-height:400px;
+	width:50em;
+	background:#eee;
+	MARGIN-RIGHT: auto; 
+	MARGIN-LEFT: auto;
+	align:center;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+
+#main p,
+#main h2,
+#main div 
+{
+	margin-top:1em;
+	margin-buttom:1em;
+	margin-left:1em;
+	margin-right:1em;	
+}
+
+.container-fluid
+{
+	
+}

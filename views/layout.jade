@@ -1,7 +1,32 @@
 doctype 5
 html
+  script( src='/javascripts/jquery-1.7.2.min.js' )
+  script( src='/javascripts/bootstrap.min.js' )
+  link( href='/stylesheets/bootstrap.min.css',rel='stylesheet',type='text/css' )
+  link( href='/stylesheets/style.css',rel='stylesheet',type='text/css' )
+  //link( href='/stylesheets/bootstrap-responsive.min.css',rel='stylesheet',type='text/css' )
+  !!! 5
+  //if lt IE 9
+    script( src='/javascripts/html5.js' )
+  //if IE 6
+    link( href='/stylesheets/ie6.min.css' )
   head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    meta(charset="utf-8")
+    .navbar.editor
+      .navbar-inner
+        #editor_logoholder.ignore_touch
+         ul.nav
+         #editor_topbar_rightbox.ignore_touch
+           p#topbar_rightbox_line1
+             登录用户： #{loginmsg}
+           p#topbar_rightbox_line2
+             | 权限： #{loginc}
+             - if( loginc !== '过客' ) {
+             a#logout( href='/logout' )
+               .登出
+             - } else {
+             a#logout( href='/login' )
+               .登录
+             - }
   body
     block content
