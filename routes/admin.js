@@ -24,6 +24,7 @@ exports.auth_user = function(req, res, next) {
         return next();
       }
       else
+        req.session.destroy();
         return next();
       }
     );
@@ -53,15 +54,22 @@ exports.login = function(req,res) {
 
     storage.getUserByName(name, function(user){
       pass = util.md5(pass)
-      console.log("pass:"+pass+"-"+user.pass);
-      if(user.pass != pass){
-        res.render('login', {
-          error : '密码错误。'
-        });
-        return;
+      if(user) {
+        if(user.pass != pass){
+          console.log("pass:"+pass+"-"+user.pass);
+          res.render('login', {
+            error : '密码错误。'
+          });
+          return;
+        } else {
+          gen_session(user, res);
+          res.redirect('/');  
+        }
       }
-      gen_session(user, res);
-      res.redirect('/');
+      res.render('login', {
+        error : '用户不存在。'
+      });
+      return;
     });
   }
 };

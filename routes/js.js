@@ -50,18 +50,22 @@ exports.navbar = function(req, res) {
   kv.DB(config.webdb);
   var items = kv.listTable();
   var menus = [];
+  var k = 0;
   for( item in items ) {
-    kv.Table(items[item]);
-    menus[item]={};
-    menus[item].id = items[item];
-    menus[item].name = kv.get('_name');
+    if( items[item].indexOf('_')==-1 ) {
+      kv.Table(items[item]);
+      menus[k]={};
+      menus[k].id = items[item];
+      menus[k].name = kv.get('_name');
+      k++;
+    }
   }
   res.write(jsmain(menus));  
-  for( item in items ) {
-    kv.Table(items[item]);
+  for( item in menus ) {
+    kv.Table(menus[item].id);
     var submenus = [];
     var tabs = kv.list();
-    var k = 0;
+    k = 0;
     for( tab in tabs ) {
       if( tabs[tab].indexOf('_')==-1 ) {
         var V = JSON.parse(kv.get(tabs[tab]));

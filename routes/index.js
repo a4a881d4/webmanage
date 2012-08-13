@@ -13,7 +13,7 @@ exports.index = function(req, res){
   loginclass = "";
   var module = req.query.m || '03index';
   console.log('require: ' +module);
-  storage.getUserByName('_classname', function(className) {
+  storage.getConfigByName('_classname', function(className) {
     if( req.session.user ) {
       loginstr += req.session.user.name;
       loginclass += className[req.session.user.uclass]; 
@@ -49,12 +49,6 @@ exports.init = function(req, res){
       V['uclass']='admin';
       kv.set(username,JSON.stringify(V));
       ret['msg']='username:'+username+',password:'+y;
-      V={};
-      V.admin = '管理员';
-      V.operator = '操作员';
-      V.watch = '监测人员';
-      V.guest = '过客';
-      kv.set('_classname',JSON.stringify(V));
     }
     console.log(JSON.stringify(ret)+kv.fn('nobody'));
     res.render('info', ret);

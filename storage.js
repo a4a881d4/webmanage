@@ -1,17 +1,26 @@
 var kv = require("filekvdb")
   , config = require('./config.js').config;
 
-exports.getUserByName = function (name, callBack) {
+
+exports.getDBTableByK = getDBTableByK = function (DB, table, K, callBack) {
   kv.root('.'+config.kvdb);
-  kv.DB(config.userdb);
-  kv.Table('password');
-  kv.has(name,function(has) {
+  kv.DB(DB);
+  kv.Table(table);
+  kv.has(K,function(has) {
     if( has ) {
-      callBack(JSON.parse(kv.get(name)));
+      callBack(JSON.parse(kv.get(K)));
     } else {
-      console.log("user:  "+name+"  noexist");
+      console.log(DB+":"+table+":"+K+"  noexist");
+      callBack();
     }
   });
 };
   
+exports.getUserByName = function (name, callBack) {
+  return getDBTableByK( config.userdb,'password',name,callBack ); 
+};
+
+exports.getConfigByName = function (name, callBack) {
+  return getDBTableByK( config.webdb,config.config_table,name,callBack ); 
+};
 

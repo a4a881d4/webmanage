@@ -7,5 +7,6 @@ exports.config = {
   kvdb : '/storage/kvdb',
   webdb : 'web',
   userdb : 'user',
+  config_table : '_config',
 }
 
