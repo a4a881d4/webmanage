@@ -14,13 +14,19 @@ exports.index = function(req, res){
   var module = req.query.m || '03index';
   console.log('require: ' +module);
   storage.getConfigByName('_classname', function(className) {
-    if( req.session.user ) {
-      loginstr += req.session.user.name;
-      loginclass += className[req.session.user.uclass]; 
+    if( req.session ) { 
+      if( req.session.user ){
+        loginstr += req.session.user.name;
+        loginclass += className[req.session.user.uclass]; 
+      } else {
+        loginstr += '您还没有登录';
+        loginclass += className['guest'];
+      }
     } else {
       loginstr += '您还没有登录';
       loginclass += className['guest'];
     }
+    	
     kv.DB(config.webdb);
     kv.Table(module);
     res.render('index', { main: JSON.parse(kv.get('_main')), loginmsg:loginstr, loginc:loginclass });

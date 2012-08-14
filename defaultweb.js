@@ -36,11 +36,14 @@ function gen() {
   
   kv.root('.'+config.kvdb);
   kv.DB(config.webdb);
-  kv.newTable('02mode');
-  kv.Table('02mode');
-  kv.set('_name','基站配置');
-  var bandwidth = {name:'带宽设置',cmd:'bandwidth'};
+  kv.newTable('mode');
+  kv.Table('mode');
+  var V = {name:'基站配置','xindex':'2'};
+  kv.set('_name',JSON.stringify(V));
+  var bandwidth = {name:'带宽设置',cmd:'bandwidth',xindex:'1'};
   kv.set('bandwidth',JSON.stringify(bandwidth));
+  var chiprate = {name:'码片速率',cmd:'chiprate',xindex:'2'};
+  kv.set('chiprate',JSON.stringify(chiprate));
   var markdown = "\
     Now is the winter of our discontent\
   Made glorious summer by this sun of York;\
@@ -65,11 +68,14 @@ function gen() {
   V.content = markdown;
   V.title = '基站配置';
   kv.set('_main',JSON.stringify(V));
-  kv.newTable('03index');
-  kv.Table('03index');
-  kv.set('_name','首页');
+  kv.newTable('index');
+  kv.Table('index');
+  V = {name:'首页',xindex:'1'};
+  kv.set('_name',JSON.stringify(V));
+  
   V.title = '首页';
   kv.set('_main',JSON.stringify(V));
+  
   kv.newTable(config.config_table);
   kv.Table(config.config_table);
   V={};

@@ -5,6 +5,11 @@
 var config = require('../config.js').config;
 var kv = require('filekvdb');
 
+jssort = function( arrays ) {
+	arrays.sort( function cmp(a,b) { return a.xindex>b.xindex; } );
+	return arrays;
+};
+
 jshead = function() {
   str = '$(function() {\n';
 //  str += '  $("button#logout").click( function() { $.get("/logout") });\n';
@@ -18,14 +23,16 @@ jsmain = function( menus ) {
   for( menu in menus ) {
     str += '    html += \'<li class="dropdown" id="'+menus[menu].id+'">\';\n';
     str += '    html += \'<a class="dropdown-toggle" href="?m='+menus[menu].id+'">\';\n';
-    str += '    html += \''+menus[menu].name+'\'+\'<b class="caret" /></a></li>\';\n';
+    str += '    html += \''+menus[menu].name+'\'+\'</a></li>\';\n';
   }    
   str += '    return html;\n  }\n';
   return str;
 }; 
 
 jssub = function( main, subs ) {
-  str = '  $("li#'+main+'").append(sub_menu_'+main+'());\n';
+	
+	str = '  $("li#'+main+' a").append(\'<b class="caret" />\');\n';
+  str += '  $("li#'+main+'").append(sub_menu_'+main+'());\n';
   str += '  function sub_menu_'+main+'() {\n';
   str += '    var html = \'<ul class="dropdown-menu">\';\n';
   for( sub in subs ) {
@@ -56,11 +63,14 @@ exports.navbar = function(req, res) {
       kv.Table(items[item]);
       menus[k]={};
       menus[k].id = items[item];
-      menus[k].name = kv.get('_name');
+      
+      var V = JSON.parse(kv.get('_name'));
+      menus[k].name = V.name;
+      menus[k].xindex = V.xindex;
       k++;
     }
   }
-  res.write(jsmain(menus));  
+  res.write(jsmain(jssort(menus)));  
   for( item in menus ) {
     kv.Table(menus[item].id);
     var submenus = [];
@@ -78,7 +88,9 @@ exports.navbar = function(req, res) {
         }
       }
     }
-    res.write( jssub(items[item],submenus ));
+    if( k>0 ) {
+      res.write( jssub(menus[item].id,jssort(submenus) ));
+    }
   }    
   res.write(jsfoot());
   res.end();
