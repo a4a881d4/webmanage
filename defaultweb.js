@@ -70,11 +70,13 @@ function gen() {
   kv.set('_main',JSON.stringify(V));
   kv.newTable('index');
   kv.Table('index');
-  V = {name:'首页',xindex:'1'};
-  kv.set('_name',JSON.stringify(V));
   
   V.title = '首页';
   kv.set('_main',JSON.stringify(V));
+  
+  V = {name:'首页',xindex:'1'};
+  kv.set('_name',JSON.stringify(V));
+  
   
   kv.newTable(config.config_table);
   kv.Table(config.config_table);

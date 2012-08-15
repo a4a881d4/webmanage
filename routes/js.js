@@ -22,7 +22,7 @@ jsmain = function( menus ) {
   str += '    var html = "";\n';
   for( menu in menus ) {
     str += '    html += \'<li class="dropdown" id="'+menus[menu].id+'">\';\n';
-    str += '    html += \'<a class="dropdown-toggle" href="?m='+menus[menu].id+'">\';\n';
+    str += '    html += \'<a class="dropdown-toggle" data-toggle="dropdown" href="#_'+menus[menu].id+'">\';\n';
     str += '    html += \''+menus[menu].name+'\'+\'</a></li>\';\n';
   }    
   str += '    return html;\n  }\n';
@@ -46,12 +46,14 @@ jssub = function( main, subs ) {
 }; 
    
 jsfoot = function() {
-  str = '});';
+	str = "";
+//	str += '  $().dropdown();\n';
+  str += '});\n';
   return str;
 };
 
 exports.navbar = function(req, res) {
-  res.writeHead(200,{'Content-Type': 'text/script; charset=utf-8'});
+  res.writeHead(200,{'Content-Type': 'text/javascript; charset=utf-8'});
   res.write(jshead());
   kv.root(__dirname+'/..'+config.kvdb);
   kv.DB(config.webdb);
@@ -64,7 +66,9 @@ exports.navbar = function(req, res) {
       menus[k]={};
       menus[k].id = items[item];
       
-      var V = JSON.parse(kv.get('_name'));
+      var str = kv.get('_name').toString();
+      console.log(items[item]+":"+str);
+      var V = JSON.parse(str);
       menus[k].name = V.name;
       menus[k].xindex = V.xindex;
       k++;

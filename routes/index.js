@@ -11,7 +11,7 @@ var storage = require('../storage.js');
 exports.index = function(req, res){
   loginstr = "";
   loginclass = "";
-  var module = req.query.m || '03index';
+  var module = req.query.m || 'index';
   console.log('require: ' +module);
   storage.getConfigByName('_classname', function(className) {
     if( req.session ) { 
@@ -29,7 +29,7 @@ exports.index = function(req, res){
     	
     kv.DB(config.webdb);
     kv.Table(module);
-    res.render('index', { main: JSON.parse(kv.get('_main')), loginmsg:loginstr, loginc:loginclass });
+    res.render('index', { main: JSON.parse(kv.get('_main')), loginmsg:loginstr, loginc:loginclass, 'id':module });
   });
   console.log("class name undefined");
 };
