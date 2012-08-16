@@ -28,6 +28,7 @@ static_dir = __dirname + '/public';
 app.configure('development', function(){
   app.use(express.static(static_dir));
   app.get('/construct',construct.index);
+  app.get('/menu',construct.menu);
   app.use(express.errorHandler());
 });
 app.configure('production', function() {

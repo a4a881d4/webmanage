@@ -38,11 +38,11 @@ function gen() {
   kv.DB(config.webdb);
   kv.newTable('mode');
   kv.Table('mode');
-  var V = {name:'基站配置','xindex':'2'};
+  var V = {name:'基站配置','xindex':'2','auth':{'admin':'rwxad','operator':'rwx','watch':'r','guest':''}};
   kv.set('_name',JSON.stringify(V));
-  var bandwidth = {name:'带宽设置',cmd:'bandwidth',xindex:'1'};
+  var bandwidth = {name:'带宽设置',cmd:'bandwidth',xindex:'1','auth':{'admin':'rwxad','operator':'rwx','watch':'r','guest':''}};
   kv.set('bandwidth',JSON.stringify(bandwidth));
-  var chiprate = {name:'码片速率',cmd:'chiprate',xindex:'2'};
+  var chiprate = {name:'码片速率',cmd:'chiprate',xindex:'2','auth':{'admin':'rwxad','operator':'rwx','watch':'r','guest':''}};
   kv.set('chiprate',JSON.stringify(chiprate));
   var markdown = "\
     Now is the winter of our discontent\
@@ -74,7 +74,7 @@ function gen() {
   V.title = '首页';
   kv.set('_main',JSON.stringify(V));
   
-  V = {name:'首页',xindex:'1'};
+  V = {name:'首页',xindex:'1','auth':{'admin':'rwxad','operator':'rwx','watch':'r','guest':'r'}};
   kv.set('_name',JSON.stringify(V));
   
   

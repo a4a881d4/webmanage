@@ -64,9 +64,11 @@ jsmenu = function( className, res ) {
       var str = kv.get('_name').toString();
       console.log(items[item]+":"+str);
       var V = JSON.parse(str);
-      menus[k].name = V.name;
-      menus[k].xindex = V.xindex;
-      k++;
+      if( V.auth[className].indexOf('r')!=-1 ) {
+        menus[k].name = V.name;
+        menus[k].xindex = V.xindex;
+        k++;
+      }
     }
   }
   res.write(jsmain(jssort(menus)));  
@@ -78,7 +80,9 @@ jsmenu = function( className, res ) {
     for( tab in tabs ) {
       if( tabs[tab].indexOf('_')==-1 ) {
         var V = JSON.parse(kv.get(tabs[tab]));
-        if( V.cmd != undefined && V.name != undefined ) {
+        if( V.cmd != undefined 
+          && V.name != undefined 
+          && V.auth[className].indexOf('r')!=-1) {
           submenus[k]={};
           submenus[k].id = tabs[tab];
           submenus[k].cmd = V.cmd;
