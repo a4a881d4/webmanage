@@ -12,7 +12,6 @@ jssort = function( arrays ) {
 
 jshead = function() {
   str = '$(function() {\n';
-//  str += '  $("button#logout").click( function() { $.get("/logout") });\n';
   return str;
 };
 
@@ -47,14 +46,11 @@ jssub = function( main, subs ) {
    
 jsfoot = function() {
 	str = "";
-//	str += '  $().dropdown();\n';
   str += '});\n';
   return str;
 };
 
-exports.navbar = function(req, res) {
-  res.writeHead(200,{'Content-Type': 'text/javascript; charset=utf-8'});
-  res.write(jshead());
+jsmenu = function( className, res ) {
   kv.root(__dirname+'/..'+config.kvdb);
   kv.DB(config.webdb);
   var items = kv.listTable();
@@ -65,7 +61,6 @@ exports.navbar = function(req, res) {
       kv.Table(items[item]);
       menus[k]={};
       menus[k].id = items[item];
-      
       var str = kv.get('_name').toString();
       console.log(items[item]+":"+str);
       var V = JSON.parse(str);
@@ -96,6 +91,18 @@ exports.navbar = function(req, res) {
       res.write( jssub(menus[item].id,jssort(submenus) ));
     }
   }    
+};
+  
+exports.navbar = function(req, res) {
+	res.writeHead(200,{'Content-Type': 'text/javascript; charset=utf-8'});
+  res.write(jshead());
+  var uclass = 'guest';
+  if( req.session ) { 
+    if( req.session.user ){
+      uclass = req.session.user.uclass;
+    }
+  }
+  jsmenu(uclass, res);
   res.write(jsfoot());
   res.end();
 };

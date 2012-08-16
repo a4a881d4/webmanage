@@ -13,16 +13,16 @@ html
         #editor_logoholder.ignore_touch
          ul.nav
          #editor_topbar_rightbox.ignore_touch
+           - if(loginc === '过客' ) {
+           button.btn.btn-small.pull-right.btn-primary
+             a(href='login') 登录
+           -} else {
            p#topbar_rightbox_line1
              登录用户： #{loginmsg}
            p#topbar_rightbox_line2
              | 权限： #{loginc}
-             - if( loginc !== '过客' ) {
              a#logout( href='/logout' )
                .登出
-             - } else {
-             a#logout( href='/login' )
-               .登录
-             - }
+           -}
   body
     block content
