@@ -43,6 +43,13 @@ exports.getMenu = function() {
   return jssort(menus);
 };
 
+exports.setMenu = function( menu ) {
+  kv.root('.'+config.kvdb);
+  kv.DB(config.webdb);
+  kv.Table(menu.id);
+  kv.set('_name',JSON.stringify(menu));
+};
+  
 exports.getSubMenu = function(submenu) {
   var menus = [];
   kv.root('.'+config.kvdb);

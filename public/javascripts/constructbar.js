@@ -19,7 +19,7 @@ $(function() {
       for( var menu in menus ) {  
         str = '<div id="'+menus[menu].id+'" class="tab-pane"/>';
         $("#side .tab-content").append(str);
-        str = '<form method="get" class="well" action="/menu" id="form_'+menus[menu].id+'"/>';
+        str = '<form class="well" id="form_'+menus[menu].id+'"/>';
         $("#side .tab-content .tab-pane#"+menus[menu].id).append(str);
         if( menus[menu].id == 'new' ) {
           str = '<p>id:(必须是全局唯一的)</p><input id="id_'+menus[menu].id+'" name="id" class="span2"/>';
@@ -48,7 +48,7 @@ $(function() {
           V.id=this.id.substr(7);
           V.name = $('#side .tab-content .tab-pane input#name_'+V.id).attr('value');
           V.auth = buildAuth('#side .tab-content .tab-pane#'+V.id+' form');
-          $.get('/menu',V);
+          $.post('/menu',V);
         }); 
       }
       $('#side .nav.nav-tabs a:first').tab('show');
