@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  script( src='/javascripts/jquery-1.7.2.min.js' )
+  script( src='/javascripts/constructbar.js' )
+  script( src='/javascripts/bootstrap.min.js' )
+  link( href='/stylesheets/bootstrap.min.css',rel='stylesheet',type='text/css' )
+  link( href='/stylesheets/style.css',rel='stylesheet',type='text/css' )
+  .container-fluit
+    .row-fluit
+      .span3
+        #side.tabbable.tabs-left
+      .span9
+        #main
+  include footer
