@@ -19,10 +19,10 @@ $(function() {
       for( var menu in menus ) {  
         str = '<div id="'+menus[menu].id+'" class="tab-pane"/>';
         $("#side .tab-content").append(str);
-        str = '<form method="post" action="/menu" id="form_'+menus[menu].id+'"/>';
+        str = '<form method="get" class="well" action="/menu" id="form_'+menus[menu].id+'"/>';
         $("#side .tab-content .tab-pane#"+menus[menu].id).append(str);
         if( menus[menu].id == 'new' ) {
-          str = '<lable>id:</lable><input id="id_'+menus[menu].id+'" name="id" class="span2"/>';
+          str = '<p>id:(必须是全局唯一的)</p><input id="id_'+menus[menu].id+'" name="id" class="span2"/>';
           $('#side .tab-content .tab-pane #form_'+menus[menu].id).append(str);
         }
         str = '<input id="name_'+menus[menu].id+'" name="name" class="span2"/>';
@@ -33,10 +33,23 @@ $(function() {
           str = authButton(ath,auth[ath],menus[menu].id);
           $('#side .tab-content .tab-pane #form_'+menus[menu].id).append(str);
         }
-        str = '<hr/><button id="submit_'+menus[menu].id+'" class="btn btn-primary"><i class="icon-refresh icon-white"/>修改</button>';
-        $('#side .tab-content .tab-pane #form_'+menus[menu].id).append(str);
-        str = '<button id="delete_'+menus[menu].id+'" class="btn btn-danger"><i class="icon-remove icon-white"/>删除</button>';
-        $('#side .tab-content .tab-pane #form_'+menus[menu].id).append(str);
+        if( menus[menu].id != 'new' ) {
+          str = '<hr/><button id="submit_'+menus[menu].id+'" class="btn btn-primary"><i class="icon-refresh icon-white"/>修改</button>';
+          $('#side .tab-content .tab-pane #form_'+menus[menu].id).append(str);
+          str = '<button id="delete_'+menus[menu].id+'" class="btn btn-danger"><i class="icon-remove icon-white"/>删除</button>';
+          $('#side .tab-content .tab-pane #form_'+menus[menu].id).append(str);
+        } else {
+          str = '<hr/><button id="add_'+menus[menu].id+'" class="btn btn-primary"><i class="icon-refresh icon-white"/>添加</button>';
+          $('#side .tab-content .tab-pane #form_'+menus[menu].id).append(str);
+        }  
+        $('#side button#submit_'+menus[menu].id).click( function() {
+          var V = {};
+          V.method = 'modify';
+          V.id=this.id.substr(7);
+          V.name = $('#side .tab-content .tab-pane input#name_'+V.id).attr('value');
+          V.auth = buildAuth('#side .tab-content .tab-pane#'+V.id+' form');
+          $.get('/menu',V);
+        }); 
       }
       $('#side .nav.nav-tabs a:first').tab('show');
       $('a[data-toggle="tab"]').on('shown',function(e) {
@@ -102,3 +115,15 @@ function authButton( ath, right, id ) {
   str += '</div>';
   return str;
 }
+
+function buildAuth( str ) {
+  var ret = {'admin':'','operator':'','watch':'','guest':''};
+  for( var r in ret ) {
+    $(str+' .btn-group[name="'+r+'"] .btn.active').each( function() {
+      ret[r] += this.getAttribute('name');
+    });
+  }
+  return ret;
+};
+
+      
