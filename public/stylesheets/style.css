@@ -5,23 +5,6 @@
 	margin-top:20px;
 }
 
-#main,#side
-{
-	min-height:400px;
-	_height:400px;
-	background:#eee;
-	
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-}
-
-#side
-{
-	width:160px;
-	margin-right:10px;
-}
-
 .content_box,.cbox
 {
 	padding:10px;

@@ -29,6 +29,9 @@ app.configure('development', function(){
   app.use(express.static(static_dir));
   app.get('/construct',construct.index);
   app.get('/menu',construct.menu);
+  app.get('/submenu',construct.submenu);
+  app.post('/menu',construct.menu);
+  app.post('/submenu',construct.submenu);
   app.use(express.errorHandler());
 });
 app.configure('production', function() {

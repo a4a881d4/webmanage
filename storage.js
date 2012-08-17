@@ -43,6 +43,29 @@ exports.getMenu = function() {
   return jssort(menus);
 };
 
+exports.getSubMenu = function(submenu) {
+  var menus = [];
+  kv.root('.'+config.kvdb);
+  kv.DB(config.webdb);
+  kv.Table(submenu);
+  var items = kv.list();
+  var k = 0;
+  menus[k]=JSON.parse(kv.get('_main').toString());
+  menus[k].id = '_main';
+  menus[k].name = '说明';
+  k++;
+  for( item in items ) {
+    if( items[item].indexOf('_')==-1 ) {
+      menus[k]={};
+      var str = kv.get(items[item]).toString();
+      menus[k]=JSON.parse(str);
+      menus[k].id = items[item];
+      k++;
+    }
+  }
+  return jssort(menus);
+};
+
 jssort = function( arrays ) {
 	arrays.sort( function cmp(a,b) { return a.xindex>b.xindex; } );
 	return arrays;
