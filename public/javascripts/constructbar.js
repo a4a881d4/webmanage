@@ -1,4 +1,6 @@
 $(function() {
+  $("ul.nav").append('<li><a href="/constructbackup?m=web">备份</a></li>');
+  $("ul.nav").append('<li><a href="/constructrestore?m=web">恢复</a></li>');
   $.get("/menu","",function(data,textStatus) {
     if( textStatus == 'success' ) {
       var menus=JSON.parse(data);
@@ -49,10 +51,27 @@ $(function() {
           V.name = $('#side .tab-content .tab-pane input#name_'+V.id).attr('value');
           V.auth = buildAuth('#side .tab-content .tab-pane#'+V.id+' form');
           $.post('/menu',V);
-        }); 
+        });
+        $('#side button#delete_'+menus[menu].id).click( function() {
+          var V = {};
+          V.method = 'delete';
+          V.id=this.id.substr(7);
+          V.name = $('#side .tab-content .tab-pane input#name_'+V.id).attr('value');
+          V.auth = buildAuth('#side .tab-content .tab-pane#'+V.id+' form');
+          $.post('/menu',V);
+        });
+        $('#side button#add_'+menus[menu].id).click( function() {
+          var V = {};
+          V.method = 'new';
+          var id=this.id.substr(4);
+          V.id= $('#side .tab-content .tab-pane input#id_'+id).attr('value');
+          V.name = $('#side .tab-content .tab-pane input#name_'+id).attr('value');
+          V.auth = buildAuth('#side .tab-content .tab-pane#'+id+' form');
+          $.post('/menu',V);
+        });  
       }
-      $('#side .nav.nav-tabs a:first').tab('show');
-      $('a[data-toggle="tab"]').on('shown',function(e) {
+      $('#side .nav.nav-tabs a:last').tab('show');
+      $('a[data-toggle="tab"][mid!="new"]').on('shown',function(e) {
         var V={};
         V.id=e.target.getAttribute('mid');
         $.get('/submenu',V,function(data,textStatus) {
@@ -61,7 +80,8 @@ $(function() {
             $("#main").html("");
             var str = '<ul class="nav nav-tabs"/>';
             $("#main").append(str);
-            for( var menu in menus ) {  
+            for( var menu in menus ) { 
+              menus[menu].name = menus[menu].dict[menus[menu].id] || menus[menu].id; 
               str = '<li><a href="#'+menus[menu].id+'" data-toggle="tab" mid="'+menus[menu].id+'">'+menus[menu].name+'</a></li>';
               $("#main .nav.nav-tabs").append(str);
             }
@@ -71,26 +91,17 @@ $(function() {
               str = '<div id="'+menus[menu].id+'" class="tab-pane"/>';
               $("#main .tab-content").append(str);
               if( menus[menu].id != '_main' ) {
-                str = '<input id="'+menus[menu].id+'" name="name" class="span2"/>';
-                $('#main .tab-content .tab-pane#'+menus[menu].id).append(str);
-                $('#main .tab-content input#'+menus[menu].id).attr('value',menus[menu].name);
-                var auth = menus[menu].auth;
-                for( var ath in auth ) {
-                  str = authButton(ath,auth[ath],menus[menu].id);
-                  $('#main .tab-content .tab-pane#'+menus[menu].id).append(str);
-                }
-                str = '<hr/><button id="submit_'+menus[menu].id+'" class="btn btn-primary"><i class="icon-refresh icon-white"/>修改</button>';
-                $('#main .tab-content .tab-pane#'+menus[menu].id).append(str);
-                str = '<button id="delete_'+menus[menu].id+'" class="btn btn-danger"><i class="icon-remove icon-white"/>删除</button>';
-                $('#main .tab-content .tab-pane#'+menus[menu].id).append(str);
+                $('#main .tab-content .tab-pane#'+menus[menu].id).html(menus[menu].html);
+                $("#auth[data-toggle='form'] button").click( modifyAuth );
               } else {
-              	str = '<lable>Tilte:</lable><input class="span4" value="'+menus[menu].title+'"/>';
+                str = '<lable>Tilte:</lable><input class="span4" value="'+menus[menu].title+'"/>';
               	$('#main .tab-content .tab-pane#'+menus[menu].id).append(str);
                 str = '<textarea border="1" class="field span8" rows="6"/>';
                 $('#main .tab-content .tab-pane#'+menus[menu].id).append(str);
                 $('#main .tab-content .tab-pane#'+menus[menu].id+' textarea').attr('value',menus[menu].content);
                 str = '<hr/><button id="submit_'+menus[menu].id+'" class="btn btn-primary"><i class="icon-refresh icon-white"/>修改</button>';
                 $('#main .tab-content .tab-pane#'+menus[menu].id).append(str);
+                $('#tables').html(menus[menu].dicthtml);
               }
             }
             $('#main .nav.nav-tabs a:first').tab('show');
@@ -126,4 +137,19 @@ function buildAuth( str ) {
   return ret;
 };
 
+function modifyAuth() {
+  var V={};
+  $(this).siblings("input").each( function() {
+    V[this.name]=this.value;
+  });
+  V.V = {'admin':'','operator':'','watch':'','guest':''};
+  for( var r in V.V ) {
+    $(this).siblings('.btn-group[name="'+r+'"]').children('.btn.active').each( function() {
+      V.V[r] += this.name;
+    });
+  }
+  $.get("/constructadd",V);
+};
+  
+  
       

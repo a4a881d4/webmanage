@@ -21,7 +21,7 @@ jsmain = function( menus ) {
   str += '    var html = "";\n';
   for( menu in menus ) {
     str += '    html += \'<li class="dropdown" id="'+menus[menu].id+'">\';\n';
-    str += '    html += \'<a class="dropdown-toggle" data-toggle="dropdown" href="#_'+menus[menu].id+'">\';\n';
+    str += '    html += \'<a class="dropdown-toggle" data-toggle="dropdown" href="?m='+menus[menu].id+'">\';\n';
     str += '    html += \''+menus[menu].name+'\'+\'</a></li>\';\n';
   }    
   str += '    return html;\n  }\n';

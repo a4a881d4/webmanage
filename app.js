@@ -30,6 +30,10 @@ app.configure('development', function(){
   app.get('/construct',construct.index);
   app.get('/menu',construct.menu);
   app.get('/submenu',construct.submenu);
+  app.get('/constructdel',construct.del);
+  app.get('/constructadd',construct.add);
+  app.get('/constructbackup',construct.backup);
+  app.get('/constructrestore',construct.restore);
   app.post('/menu',construct.menu);
   app.post('/submenu',construct.submenu);
   app.use(express.errorHandler());
