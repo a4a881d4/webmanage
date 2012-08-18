@@ -10,28 +10,29 @@ var storage = require('../storage.js');
 
 exports.index = function(req, res){
   loginstr = "";
-  loginclass = "";
-  var module = req.query.m || 'index';
-  console.log('require: ' +module);
+  loginclass = "过客";
+  var m = req.query.m || 'index';
+  var s = req.query.s;
+  var argv = {loginmsg:loginstr, loginc:loginclass, 'id':module };
   storage.getConfigByName('_classname', function(className) {
     if( req.session ) { 
       if( req.session.user ){
         loginstr += req.session.user.name;
         loginclass += className[req.session.user.uclass]; 
-      } else {
-        loginstr += '您还没有登录';
-        loginclass += className['guest'];
-      }
-    } else {
-      loginstr += '您还没有登录';
-      loginclass += className['guest'];
+      } 
     }
-    	
-    kv.DB(config.webdb);
-    kv.Table(module);
-    res.render('index', { main: JSON.parse(kv.get('_main')), loginmsg:loginstr, loginc:loginclass, 'id':module });
+    if( s ) {
+      storage.getDBTableByK( config.webdb,m,req.query.s, function(V) {
+        if( V.DB != 'undefined' &&
+          V.T != 'undefinded' ) {
+            storage.jadeRenderTable( V.DB, V.T, m, s, res,argv );
+        }
+      });
+    } else {
+      argv.html="<h1>index</h1>";   
+      res.render('index', argv);
+    }
   });
-  console.log("class name undefined");
 };
 
 exports.init = function(req, res){

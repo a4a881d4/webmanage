@@ -60,6 +60,11 @@ exports.setNewMenu = function( menu ) {
   V.title = menu.name;
   V.content = "";
   kv.set('_main',JSON.stringify(V));
+  V={};
+  V.key = "null";
+  kv.set('newSubMenu',JSON.stringify(V));
+  V={newSubMenu:'新建子菜单'};
+  kv.set('_dict',JSON.stringify(V));
 };
 exports.delMenu = function( menu ) {
   kv.root('.'+config.kvdb);
@@ -156,6 +161,34 @@ jadeStr = function ( kv,K,l,s ) {
   return str;
 };
 
+jadeStrNoConstruct = function ( kv,K,l,s,mm,sm ) {
+  var V = kv.get(K);
+  console.log(V);
+  var o = JSON.parse(kv.get(K).toString());
+  var str = s+'form.well.form-horizontal\n';
+  str += s+'  fieldset\n';
+  str += s+'    legend '+l+'\n'; 
+  for( var i in o ) {
+    if( i!=='auth' ) {
+      str += s+'    .control-group\n';
+      str += s+'      lable.control-label(for="'+i+'") '+i+'\n';
+      str += s+'      .controls\n';
+      str += s+'        .input-append\n';
+      str += s+'          input.span2(type="text",id="'+i+'",value="'+o[i]+'")\n';
+      str += s+'          a.btn(type="button",id="del_'+i+'", href=\'/del?MM='+mm+'&SM='+sm+'&K='+K+'&P='+i+'\') 删除\n';
+    } 
+  }
+  i = 'newItem';
+  str += s+'form.well.form-inline( method="get", action=\'/add\')\n';
+  str += s+'  input(type="hidden",name="K",value="'+K+'")\n';
+  str += s+'  input(type="hidden",name="MM",value="'+mm+'")\n';
+  str += s+'  input(type="hidden",name="SM",value="'+sm+'")\n';
+  str += s+'  input.span2(type="text",name="P",id="'+i+'",placeholder="'+'键'+'")\n';
+  str += s+'  input.span2(type="text",name="V",id="'+i+'",placeholder="'+'值'+'")\n';
+  str += s+'  button(type="submit",id="add_'+i+'") 添加\n';
+  return str;
+};
+
 exports.delP = function( aKey ) {
   kv.root('.'+config.kvdb);
   kv.DB(aKey.DB);
@@ -168,9 +201,15 @@ exports.addP = function( aKey ) {
   kv.root('.'+config.kvdb);
   kv.DB(aKey.DB);
   kv.Table(aKey.T);
-  var V = JSON.parse(kv.get(aKey.K).toString());
-  V[aKey.P]=aKey.V;
-  kv.set(aKey.K,JSON.stringify(V));
+  var V = {};
+  if( aKey.K == 'newSubMenu' ) {
+    V.id=aKey.V;
+    kv.set(aKey.V,JSON.stringify(V));
+  } else {
+    V = JSON.parse(kv.get(aKey.K).toString());
+    V[aKey.P]=aKey.V;
+    kv.set(aKey.K,JSON.stringify(V));
+  }
 };
 
 jadeStrAuth = function( kv, K, o, s ) {
@@ -213,4 +252,56 @@ exports.restore = function( DB ) {
   V.DB=DB;
   kv.restore(V);
 };
+  
+jadeStrObj = function( kv, o, l, s, r ) {
+  var str = s+'form.well.form-horizontal\n';
+  str += s+'  fieldset\n';
+  str += s+'    legend '+l+'\n'; 
+  for( var i in o ) {
+    str += s+'    .control-group\n';
+    str += s+'      lable.control-label(for="'+i+'") '+i+'\n';
+    str += s+'      .controls\n';
+    str += s+'        .input-append\n';
+    if( r.indexOf('w')==-1 ) {
+      str += s+'          input.span2.uneditable(type="text",id="'+i+'",value="'+o[i]+'")\n';
+    } else {
+      str += s+'          input.span2(type="text",id="'+i+'",value="'+o[i]+'")\n';
+    }
+    if( r.indexOf('w')==-1 ) {
+      str += s+'          a.btn(id="modify", data-toggle="button", DB="'+kv.DB()+'", T="'+kv.Table()+'", K="'+i+'") 修改\n';
+    }
+    if( r.indexOf('d')==-1 ) {
+      str += s+'          a.btn(id="del", data-toggle="button", DB="'+kv.DB()+'", T="'+kv.Table()+'", K="'+i+'") 删除\n';
+    }
+  }
+  if( r.indexOf('d')==-1 ) {
+    i = 'new';
+    str += s+'.well.form-inline\n';
+    str += s+'  input.span2(type="text",name="P",id="'+i+'",placeholder="'+'键'+'")\n';
+    str += s+'  input.span2(type="text",name="V",id="'+i+'",placeholder="'+'值'+'")\n';
+    str += s+'  a.btn(id="add", DB="'+kv.DB()+'", T="'+kv.Table()+'", K="'+i+'") 添加\n';
+  } 
+}
+
+exports.jadeRenderTable = function( DB, T, m, s, res, argv ) {
+  getDBTableByK(config.webdb,m,'_dict', function( dict ) {
+    if( !dict ) {
+      dict={};
+    }
+    kv.root('.'+config.kvdb);
+    kv.DB(DB);
+    kv.Table(T);
+    var str='.row-fuild\n';
+    var items = kv.list();
+    for( var item in items ) {
+      str+='  .span8\n';
+      var l = dict[item] || item;
+      str+=jadeStrNoConstruct(kv,items[item],l,'    ',m,s );
+    }
+    var fn = jade.compile(str);
+    argv.html=fn();
+    res.render('index', argv );
+  });
+}; 
+  
   

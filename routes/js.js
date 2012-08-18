@@ -21,7 +21,7 @@ jsmain = function( menus ) {
   str += '    var html = "";\n';
   for( menu in menus ) {
     str += '    html += \'<li class="dropdown" id="'+menus[menu].id+'">\';\n';
-    str += '    html += \'<a class="dropdown-toggle" data-toggle="dropdown" href="?m='+menus[menu].id+'">\';\n';
+    str += '    html += \'<a class="dropdown-toggle" data-toggle="dropdown" href="#'+menus[menu].id+'">\';\n';
     str += '    html += \''+menus[menu].name+'\'+\'</a></li>\';\n';
   }    
   str += '    return html;\n  }\n';
@@ -36,7 +36,7 @@ jssub = function( main, subs ) {
   str += '    var html = \'<ul class="dropdown-menu">\';\n';
   for( sub in subs ) {
     str += '    html += \'<li>\';\n';
-    str += '    html += \'<a id="'+subs[sub].id+'" href="/'+subs[sub].cmd+'">\';\n';
+    str += '    html += \'<a id="'+subs[sub].id+'" href="?m='+main+'&s='+subs[sub].id+'">\';\n';
     str += '    html += \''+subs[sub].name+'\'+\'</a></li>\';\n';
   }    
   str += '    html += \'</ul>\';\n';
@@ -45,7 +45,7 @@ jssub = function( main, subs ) {
 }; 
    
 jsfoot = function() {
-	str = "";
+	str = "$().dropdown()\n";
   str += '});\n';
   return str;
 };
@@ -78,15 +78,11 @@ jsmenu = function( className, res ) {
     var tabs = kv.list();
     k = 0;
     for( tab in tabs ) {
-      if( tabs[tab].indexOf('_')==-1 ) {
+      if( tabs[tab].indexOf('_')==-1 && tabs[tab].indexOf('newSubMenu')==-1 ) {
         var V = JSON.parse(kv.get(tabs[tab]));
-        if( V.cmd != undefined 
-          && V.name != undefined 
-          && V.auth[className].indexOf('r')!=-1) {
-          submenus[k]={};
+        if( V.auth[className].indexOf('r')!=-1) {
+          submenus[k]=V;
           submenus[k].id = tabs[tab];
-          submenus[k].cmd = V.cmd;
-          submenus[k].name = V.name;
           k++;
         }
       }
