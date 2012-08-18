@@ -294,7 +294,7 @@ exports.jadeRenderTable = function( DB, T, m, s, res, argv ) {
     var str='.row-fuild\n';
     var items = kv.list();
     for( var item in items ) {
-      str+='  .span8\n';
+      str+='  .span6\n';
       var l = dict[item] || item;
       str+=jadeStrNoConstruct(kv,items[item],l,'    ',m,s );
     }
